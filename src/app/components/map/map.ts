@@ -1,17 +1,26 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, NgZone } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
+import { Menu } from "../menu/menu";
+
 
 @Component({
   selector: 'app-map',
   standalone: true,
   templateUrl: './map.html',
-  styleUrls: ['./map.css']
+  styleUrls: ['./map.css'],
+  imports: [CommonModule, Menu]
 })
 export class Map implements AfterViewInit {
 
+  selectedRestaurant: string | null = null;
+  selectedRestaurantCategory: string | null = null;
+
+  constructor(private ngZone: NgZone) {}
+
   ngAfterViewInit(): void {
     // Création de la carte
-    const map = L.map('map').setView([45.783954, 4.869893], 19);
+    const map = L.map('map').setView([45.783954, 4.869893], 17);
 
     // Ajout des tuiles OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -41,37 +50,9 @@ export class Map implements AfterViewInit {
 
             // 2️⃣ Requête sur le nom du restaurant au clic
             marker.on('click', () => {
-              const requestBody = { restaurantName: r.name };
-
-              fetch('http://localhost:8080/api/menu', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestBody)
-              })
-              .then(res => res.json())
-              .then((menuItems: any[]) => {
-                if (!menuItems || menuItems.length === 0) {
-                  marker.bindPopup(
-                    `<b>${r.name}</b><br>${r.address}<br>${r.city}<hr><i>Aucun menu trouvé.</i>`
-                  ).openPopup();
-                  return;
-                }
-
-                const menuHtml = menuItems
-                  .map(item => `<li>${item.dishName} — <b>${item.dishPrice}€</b></li>`)
-                  .join('');
-
-                marker.bindPopup(
-                  `<b>${r.name}</b><br>${r.address}<br>${r.city}<hr><ul>${menuHtml}</ul>`
-                ).openPopup();
-              })
-              .catch(err => {
-                console.error('Erreur fetch menu:', err);
-                marker.bindPopup(
-                  `<b>${r.name}</b><br>${r.address}<br>${r.city}<hr><i>Erreur de chargement du menu.</i>`
-                ).openPopup();
+              this.ngZone.run(() => {
+                this.selectedRestaurant = r.name;
+                this.selectedRestaurantCategory = r.category;
               });
             });
           }

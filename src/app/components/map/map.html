@@ -1,1 +1,13 @@
-<div id="map"></div>
+<div id="map-container">
+    <div id="map"></div>
+
+    <ng-container *ngIf="selectedRestaurant as selected">
+        <app-menu 
+            [restaurantName]="selected"
+            [restaurantCategory]="selectedRestaurantCategory"
+            (closed)="selectedRestaurant = null">
+        </app-menu>
+    </ng-container>
+
+</div>
+ 

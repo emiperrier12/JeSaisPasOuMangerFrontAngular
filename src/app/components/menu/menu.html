@@ -1,0 +1,19 @@
+<div class="menu-overlay" *ngIf="restaurantName">
+  <div class="menu-box">
+    <button class="close-btn" (click)="closeMenu()">×</button>
+    <h2>{{ restaurantName }} -- {{ convertToEmoji(restaurantCategory) }}</h2>
+
+    <div *ngIf="loading">Chargement du menu...</div>
+    <div *ngIf="error">{{ error }}</div>
+
+    <ul *ngIf="!loading && !error && menuItems.length > 0">
+      <li *ngFor="let item of menuItems">
+        {{ item.dishName }} — <b>{{ item.dishPrice }}€</b>
+      </li>
+    </ul>
+
+    <div *ngIf="!loading && !error && menuItems.length === 0">
+      Aucun plat trouvé pour ce restaurant.
+    </div>
+  </div>
+</div>
