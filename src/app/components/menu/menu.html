@@ -1,16 +1,35 @@
 <div class="menu-overlay" *ngIf="restaurantName">
   <div class="menu-box">
-    <button class="close-btn" (click)="closeMenu()">×</button>
-    <h2>{{ restaurantName }} -- {{ convertToEmoji(restaurantCategory) }}</h2>
+    <div class="menu-top-box" id="name">
+      <h2>{{ restaurantName }}    {{ convertToEmoji(restaurantCategory) }}</h2>
+      <button class="close-btn" (click)="closeMenu()">×</button> 
+    </div>
+    <div class="menu-inside-box" id="info"> 
+        <p> <b>Adresse : </b><br>{{ dataRestaurant.address }}</p>
+        <p> <b>Budget : </b><br>{{ dataRestaurant.budget}} €</p>
+        <p> <b>Temps d'attente moyen : </b><br>{{ dataRestaurant.waitingTime }} min</p>
+        <p> <b>Numéro de Téléphone : </b><br> {{ dataRestaurant.phoneNumber }}</p>
+        <p> <b>Consommation : </b><br> {{ dataRestaurant.typeService }} </p>
+    </div>
 
     <div *ngIf="loading">Chargement du menu...</div>
     <div *ngIf="error">{{ error }}</div>
-
-    <ul *ngIf="!loading && !error && menuItems.length > 0">
-      <li *ngFor="let item of menuItems">
-        {{ item.dishName }} — <b>{{ item.dishPrice }}€</b>
-      </li>
-    </ul>
+    <div class="menu-inside-box" id="menu-list">
+      <table class="redTable" *ngIf="!loading && !error && menuItems.length > 0">
+        <thead>
+          <tr>
+            <th>Plat</th>
+            <th>Prix</th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr *ngFor="let item of menuItems">
+            <td> {{ item.dishName }} </td>
+            <td> {{ item.dishPrice }} € </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
 
     <div *ngIf="!loading && !error && menuItems.length === 0">
       Aucun plat trouvé pour ce restaurant.

@@ -19,6 +19,8 @@ export class Menu implements OnChanges {
   loading = false;
   error: string | null = null;
 
+  dataRestaurant: any = {};
+
   ngOnChanges(): void {
     if (this.restaurantName) {
       this.loadMenu(this.restaurantName);
@@ -57,7 +59,22 @@ export class Menu implements OnChanges {
       .finally(() => {
         this.loading = false;
       });
+
+    fetch('http://localhost:8080/api/getInformation', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ restaurantName : name })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Erreur lors de la récupération des informations du restaurant');
+      return res.json();
+    }).then((data: any) => {
+      this.dataRestaurant = data;
+    })
   }
+
+  
+    
 
   closeMenu(): void {
     this.closed.emit(); // Préviens le parent de fermer le menu

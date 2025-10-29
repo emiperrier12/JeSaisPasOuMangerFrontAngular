@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import { Menu } from "../menu/menu";
 
-
 @Component({
   selector: 'app-map',
   standalone: true,
@@ -11,7 +10,7 @@ import { Menu } from "../menu/menu";
   styleUrls: ['./map.css'],
   imports: [CommonModule, Menu]
 })
-export class Map implements AfterViewInit {
+export class MapComponent implements AfterViewInit {
 
   selectedRestaurant: string | null = null;
   selectedRestaurantCategory: string | null = null;
@@ -27,9 +26,16 @@ export class Map implements AfterViewInit {
       maxZoom: 25,
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
+    
+    const customIcon = L.icon({
+      iconUrl: 'assets/icons/marker.png',
+      iconSize: [38, 38], // largeur, hauteur en pixels
+      iconAnchor: [19, 38], // point de l'icône correspondant à la position du marqueur
+      popupAnchor: [0, -38] // décalage du popup par rapport à l'icône
+    });
 
     // Marqueur statique (exemple)
-    L.marker([45.783954, 4.869893])
+    L.marker([45.783954, 4.869893], { icon: customIcon })
       .addTo(map)
       .bindPopup('Mon École')
       .openPopup();
@@ -40,7 +46,7 @@ export class Map implements AfterViewInit {
       .then(data => {
         data.forEach((r: any) => {
           if (r.latitude && r.longitude) {
-            const marker = L.marker([r.latitude, r.longitude]).addTo(map);
+            const marker = L.marker([r.latitude, r.longitude], { icon: customIcon }).addTo(map);
 
             // 1️⃣ Affichage du tooltip au survol
             marker.bindTooltip(
